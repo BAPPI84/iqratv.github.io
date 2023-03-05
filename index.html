@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+
+    <title>Watch Time Pro</title>
+  </head>
+  <body >
+    <script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      //add link here
+      var videoLinks = [  
+"https://www.youtube.com/watch?v=uPziXwlS_f4",
+"https://www.youtube.com/watch?v=T3zu4jgKLyM&t=3s",
+"https://www.youtube.com/watch?v=YejjmM7GHfY&t=8s",
+"https://www.youtube.com/watch?v=zFlVmNEC-ww",
+"https://www.youtube.com/watch?v=QmugITLUMFs",
+"https://www.youtube.com/watch?v=XyB-96kl85k&t=2s",
+"https://www.youtube.com/watch?v=8l-n-UjVb1U",
+"https://www.youtube.com/watch?v=Q4E3N385qjQ",
+"https://www.youtube.com/watch?v=mxdkDxkkpt4",
+"https://www.youtube.com/watch?v=Bo7u7zfX-Oo",
+"https://www.youtube.com/watch?v=mJ0AQAUHC2I",
+"https://www.youtube.com/watch?v=UCsfcPJYkgo",
+"https://www.youtube.com/watch?v=iziL6Q7d3kQ",
+"https://www.youtube.com/watch?v=g3cflNTJtqk",
+"https://www.youtube.com/watch?v=hyuuF6s21SQ",
+"https://www.youtube.com/watch?v=J0T4Uv6dpoQ",
+"https://www.youtube.com/watch?v=T97WHn6viks",
+"https://www.youtube.com/watch?v=f7eYxeoKwuY&t=2s",
+"https://www.youtube.com/watch?v=4lrbgMTxJbg",
+"https://www.youtube.com/watch?v=DfJ9yRXpUEE",
+"https://www.youtube.com/watch?v=vNrxk4rHMKI",
+"https://www.youtube.com/watch?v=gCoJu2pEVI8",
+"https://www.youtube.com/watch?v=4cQMMc-1Zyo&t=11s",
+"https://www.youtube.com/watch?v=v2cjyyMZRHw",
+"https://www.youtube.com/watch?v=0iEfT0kIT_c&t=4s",
+"https://www.youtube.com/watch?v=U3LHLy_Qwpg",
+
+
+
+      ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      /////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////
+
+      var videoIds = videoLinks.map(getVideoId);
+      var totalVideo = videoLinks.length;
+      var tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      var videoAdded = false;
+      var players = [];
+      var totalDuration = 0;
+      function getVideoId(videoLink) {
+        var regExp =
+          /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        var match = videoLink.match(regExp);
+        if (match && match[2].length == 11) {
+          return match[2];
+        } else {
+          return null;
+        }
+      }
+
+      function onYouTubeIframeAPIReady() {
+        videoIds.forEach(function (videoId, index) {
+          var playerDiv = document.createElement("div");
+          playerDiv.className = "col-lg-6";
+          playerDiv.id = "player" + (index + 1);
+          document.getElementById("players").appendChild(playerDiv);
+
+          players[index] = new YT.Player("player" + (index + 1), {
+            height: "315",
+            width: "560",
+            videoId: videoId,
+            playerVars: {
+              autoplay: 1,
+              mute: 1,
+              suggestedQuality: "small",
+            },
+            events: {
+              onReady: onPlayerReady,
+              onStateChange: onPlayerStateChange,
+            },
+          });
+        });
+      }
+
+      function onPlayerReady(event) {
+        event.target.setPlaybackRate(0.25);
+        event.target.playVideo();
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING && !videoAdded) {
+          totalDuration += event.target.getDuration();
+          videoAdded = true;
+        }
+        document.getElementById("result").innerHTML =
+          "Total video " +
+          totalVideo +
+          " Watch Time: " +
+          convertToHours(totalDuration) +
+          " hours";
+      }
+
+      function convertToHours(duration) {
+        return (duration / 3600).toFixed(2) * 4*totalVideo;
+      }
+    </script>
+
+    <div class="container">
+      <div id="center">Watch Time Pro By Mehedi Hasan</div>
+      <div id="result"></div>
+      <div class="row">
+        <div id="players"></div>
+
+      </div>
+    </div>
+  </body>
+</html>
